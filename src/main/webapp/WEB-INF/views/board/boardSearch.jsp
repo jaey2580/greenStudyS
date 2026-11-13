@@ -15,6 +15,7 @@
 <p><br/></p>
 <div class="container">
   <h2>개별검색</h2>
+  git 연습 중....
 </div>
 <p><br/></p>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
