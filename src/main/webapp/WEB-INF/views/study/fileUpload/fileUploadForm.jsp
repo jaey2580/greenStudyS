@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:set var="ctp" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html>
@@ -11,6 +12,97 @@
   <script>
     'use strict';
     
+    // 전체선택
+	  $(function(){
+	  	$("#checkAll").click(function(){
+	  		if($("#checkAll").prop("checked")) {
+		    		$(".chk").prop("checked", true);
+	  		}
+	  		else {
+		    		$(".chk").prop("checked", false);
+	  		}
+	  	});
+	  });
+	  
+	  // 선택항목 반전
+	  $(function(){
+	  	$("#reversekAll").click(function(){
+	  		$("#checkAll").prop("checked",false);
+	  		$(".chk").prop("checked", function(){
+	  			return !$(this).prop("checked");
+	  		});
+	  	});
+	  });
+    
+	  // 개별파일 삭제처리
+    function fileDelete(file) {
+    	let ans = confirm("선택한 파일을 삭제하시겠습니까?");
+    	if(!ans) return false;
+    	
+    	$.ajax({
+    		url  : "${ctp}/study/fileUpload/fileDelete",
+    		type : "post",
+    		data : {file : file},
+    		success:function() {
+  				alert("파일이 삭제되었습니다.");
+  				location.reload();
+    		},
+    		error : function() {
+    			alert("전송오류!");
+    		}
+    	});
+    }
+	  
+	  // 전체파일 삭제처리
+    function fileDeleteAll() {
+    	let ans = confirm("모든 파일을 삭제하시겠습니까?");
+    	if(!ans) return false;
+    	
+    	$.ajax({
+    		url  : "${ctp}/study/fileUpload/fileDeleteAll",
+    		type : "post",
+    		success:function(res) {
+    			if(res != 0) {
+    				alert("파일이 삭제되었습니다.");
+    				location.reload();
+    			}
+    			else alert("파일 삭제 실패~");
+    		},
+    		error : function() {
+    			alert("전송오류!");
+    		}
+    	});
+    }
+	  
+	  // 선택항목 삭제하기(ajax처리하기)
+	  function selectDelCheck() {
+	  	let ans = confirm("선택된 모든 게시물을 삭제 하시겠습니까?");
+	  	if(!ans) return false;
+	  	let delItems = "";
+	  	for(let i=0; i<myform.chk.length; i++) {
+	  		if(myform.chk[i].checked == true) delItems += myform.chk[i].value + "/";
+	  	}
+	  	if(delItems == "") {
+	  		alert("한개 이상 선택 후 처리하세요.");
+	  		return false;
+	  	}
+			
+	  	$.ajax({
+	  		url  : "${ctp}/study/fileUpload/fileSelectDelete",
+	  		type : "post",
+	  		data : {delItems : delItems},
+	  		success:function(res) {
+	  			if(res == "1") {
+	  				alert("선택된 파일을 삭제처리 하였습니다.");
+	  			  location.reload();
+	  			}
+	  		},
+	  		error  :function() {
+	  			alert("전송오류!!");
+	  		}
+	  	});
+	  }
+	  
     function fCheck() {
     	let fName = document.getElementById("fName").value;
     	let ext = fName.substring(fName.lastIndexOf(".")+1).toLowerCase();
@@ -74,7 +166,51 @@
     <div class="text-center">
       <input type="button" value="파일업로드(service객체)" onclick="fCheck()" class="btn btn-success"/>
       <input type="button" value="파일업로드2(ProjectProvide객체)" onclick="fCheck2()" class="btn btn-primary"/>
+      <input type="button" value="멀티파일업로드연습" onclick="location.href='fileUpload/multFile'" class="btn btn-info"/>
     </div>
+  <hr class="border"/>
+  <div class="mt-3">/resources/data/fileUpload 폴더의 파일 정보(${fileCount}개)</div>
+	<hr class="border"/>
+	<div class="row">
+    <div class="col">
+      <input type="checkbox" id="checkAll" onclick="checkAllCheck()"/>전체선택/해제 &nbsp;
+      <input type="checkbox" id="reversekAll" onclick="reverseAllCheck()"/>선택반전 &nbsp;
+      <input type="button" value="선택항목삭제" onclick="selectDelCheck()" class="btn btn-danger btn-sm"/>
+    </div>
+    <div class="col-auto mb-2">
+      <input type="button" value="폴더내 모든파일 삭제" onclick="fileDeleteAll()" class="btn btn-danger btn-sm"/>
+    </div>
+	</div>
+  <table class="table table-hover text-center mt-3">
+    <tr class="table-secondary">
+      <th>번호</th>
+      <th>파일명</th>
+      <th>파일형식</th>
+      <th>비고</th>
+    </tr>
+    <c:forEach var="file" items="${files}" varStatus="st">
+      <tr>
+        <td>
+          <input type="checkbox" name="chk" class="chk" value="${file}"/>
+          ${st.count}
+        </td>
+        <td>${file}</td>
+        <td>
+          <c:set var="fNameArray" value="${fn:split(file,'.')}"/>
+          <c:set var="extName" value="${fn:toLowerCase(fNameArray[fn:length(fNameArray)-1])}" />
+          <c:if test="${extName == 'zip'}">압축파일</c:if>
+          <c:if test="${extName == 'ppt' || extName == 'pptx'}">파워포인트 파일</c:if>
+          <c:if test="${extName == 'hwp'}">한글파일</c:if>
+          <c:if test="${extName == 'jpg' || extName == 'gif' || extName == 'png'}">
+            <img src="${ctp}/fileUpload/${file}" width="150px" />
+          </c:if>
+        </td>
+        <td>
+          <input type="button" value="삭제" onclick="fileDelete('${file}')" class="btn btn-danger btn-sm"/>
+        </td>
+      </tr>
+    </c:forEach>
+  </table>  
   </form>
 </div>
 <p><br/></p>

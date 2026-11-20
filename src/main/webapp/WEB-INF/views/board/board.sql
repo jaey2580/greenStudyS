@@ -26,6 +26,8 @@ select * from board;
 create table boardReply (
   idx      	int not null auto_increment,/* 댓글 고유번호 */
   boardIdx	int not null,						/* 원본글의 고유번호 */
+  re_step 	int not null,						/* 레벨(re_step)에 따른 들여쓰기(부모 re_step+1) */
+  re_order 	int not null, 					/* 댓글의 순서(부모 re_order보다 큰 댓글을 모두 +1 시키고, 자신은 부모 re_order+1 처리) */
   mid				varchar(20),						/* 댓글 올린이 아이디 */
   nickName  varchar(20) not null,		/* 댓글 올린이 별명 */
   wDate			datetime default now(),	/* 댓글 쓴날짜 */
@@ -41,7 +43,7 @@ create table boardReply (
 desc boardReply;
 drop table boardReply;
 
-insert into boardReply values (default,28,'kms1234','김장미',default,'192.168.50.66','잘 보고 갑니다.');
+insert into boardReply values (default,27,'kms1234','김장미',default,'192.168.50.66','잘 보고 갑니다.');
 
 select * from boardReply;
 

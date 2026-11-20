@@ -18,4 +18,5 @@ public class BoardVO {
 
 	private int replyCnt;
 	private int hour_diff;
+	
 }

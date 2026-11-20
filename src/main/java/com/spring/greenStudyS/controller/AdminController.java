@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spring.greenStudyS.common.PageVO;
 import com.spring.greenStudyS.common.PagiNation;
 import com.spring.greenStudyS.common.ProjectProvide;
+import com.spring.greenStudyS.service.AdminService;
+import com.spring.greenStudyS.service.GuestService;
 import com.spring.greenStudyS.service.MemberService;
+import com.spring.greenStudyS.vo.GuestVO;
 import com.spring.greenStudyS.vo.MemberVO;
 
 @Controller
@@ -26,10 +29,12 @@ public class AdminController {
 
 	@Autowired
 	MemberService memberService;
+
+	@Autowired
+	GuestService guestService;
 	
 	@Autowired
 	PagiNation pagiNation;
-	
 	
 	@Autowired
 	ProjectProvide projectProvide;
@@ -71,6 +76,46 @@ public class AdminController {
 		return "admin/member/memberList";
 	}
 	
+	//신규회원 리스트
+	@GetMapping("/newMemberList")
+	public String newMemberListGet(Model model, PageVO pageVO,
+			@RequestParam(name = "pag", defaultValue = "1", required = false) int pag,
+			@RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize
+			) {
+		
+		pageVO.setPag(pag);
+		pageVO.setPageSize(pageSize);
+		pageVO.setSection("member");
+		pageVO = pagiNation.getTotRecCnt(pageVO);
+		
+		List<MemberVO> vos = adminService.getNewMemberList(pageVO.getStartIndexNo(), pageSize);
+		
+		
+		model.addAttribute("vos", vos);
+		model.addAttribute("pageVO", pageVO);
+		return "admin/member/newMemberList";
+	}
+	
+	//탈퇴회원 리스트
+	@GetMapping("/memberDeleteList")
+	public String memberDeleteListGet(Model model, PageVO pageVO,
+			@RequestParam(name = "level", defaultValue = "99", required = false) int level,
+			@RequestParam(name = "pag", defaultValue = "1", required = false) int pag,
+			@RequestParam(name = "pageSize", defaultValue = "5", required = false) int pageSize
+			) {
+		
+		pageVO.setPag(pag);
+		pageVO.setPageSize(pageSize);
+		pageVO.setSection("member");
+		pageVO = pagiNation.getTotRecCnt(pageVO);
+		
+		List<MemberVO> vos = adminService.getMemberDeleteList(pageVO.getStartIndexNo(), pageSize, level);
+		
+		model.addAttribute("vos", vos);
+		model.addAttribute("pageVO", pageVO);
+		return "admin/member/memberDeleteList";
+	}
+	
 	@GetMapping("/memberContent")
 	public String memberContentGet(Model model, String mid) {
 		MemberVO vo = memberService.getMemberIdCheck(mid);
@@ -83,12 +128,20 @@ public class AdminController {
 	@PostMapping("memberLevelSelectCheck")
 	public String memberLevelSelectCheckPost(String idxSelectArray, int levelItem) {
 		String[] idxSelectArrays = idxSelectArray.split("/");
-		
+		int res = 0;
 		for(int i=0; i<idxSelectArrays.length; i++) {
 			int idx = Integer.parseInt(idxSelectArrays[i]);
-			adminService.setMemberLevelSelectCheck(idx, levelItem);
+			res = adminService.setMemberLevelSelectCheck(idx, levelItem);
 		}
-		return "1";
+		return res+"";
+	}
+	
+	//개별 회원 등급 변경
+	@ResponseBody
+	@PostMapping("memberLevelChange")
+	public String memberLevelChangePost(int idx, int levelItem) {
+		int res = adminService.setMemberLevelSelectCheck(idx, levelItem);
+		return res+"";
 	}
 	
 	//선택 회원 영구 탈퇴
@@ -100,5 +153,37 @@ public class AdminController {
 		return adminService.setMemberDeleteOk(idx)+"";
 	}
 	
+	//방명록리스트
+	@GetMapping("/guestList")
+	public String guestList(Model model, PageVO pageVO,
+			@RequestParam(name = "pag", defaultValue = "1", required = false) int pag,
+			@RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize
+		) {
+		pageVO.setPag(pag);
+		pageVO.setPageSize(pageSize);
+		pageVO.setSection("guest");
+		pageVO = pagiNation.getTotRecCnt(pageVO);
+		
+		List<GuestVO> vos = guestService.getGuestList(pageVO.getStartIndexNo(), pageSize);
+		
+		model.addAttribute("vos", vos);
+		model.addAttribute("pageVO", pageVO);
+		return "admin/guest/guestList";
+	}
+	
+	//선택 방명록 삭제
+	@ResponseBody
+	@PostMapping("guestSelectdelete")
+	public String mguestSelectdeletePost(String idxSelectArray) {
+		String[] idxSelectArrays = idxSelectArray.split("/");
+		int res = 0;
+		for(int i=0; i<idxSelectArrays.length; i++) {
+			int idx = Integer.parseInt(idxSelectArrays[i]);
+			res = guestService.setGuestDelete(idx);
+		}
+		return res+"";
+	}
+	
 	
 }
+

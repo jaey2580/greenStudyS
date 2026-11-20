@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 	<jsp:include page="/WEB-INF/views/include/bs5.jsp" />
   <title>boardInput.jsp</title>
+	<script src="${ctp}/ckeditor/ckeditor.js"></script> <!-- 프론트 라이브러리를 임포트시켜야하는데 보통 이 파일이 js파일임.js파일은 링크태그를 쓰지 않으니 스크립트 -->
   <style>
     th {
       background-color: #eee !important;
@@ -34,7 +35,16 @@
       </tr>
       <tr>
         <th>글내용</th>
-        <td><textarea name="content" id="content" rows="6" class="form-control" required></textarea></td>
+        <td>
+        	<textarea name="content" id=CKEDITOR rows="6" class="form-control" required></textarea>
+      		<script>
+      			CKEDITOR.replace("content",{
+      				height:400,
+      				filebrowserUploadUrl:"${ctp}/imageUpload",
+      				uploadUrl : "${ctp}/imageUpload"
+      			});
+      		</script>
+      	</td>
       </tr>
       <tr>
         <th>공개여부</th>

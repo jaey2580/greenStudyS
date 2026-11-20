@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.spring.greenStudyS.common.ProjectProvide;
 import com.spring.greenStudyS.dao.StudyDAO;
 import com.spring.greenStudyS.vo.User2VO;
 
@@ -20,6 +22,9 @@ public class StudyServiceImpl implements StudyService {
 	
 	@Autowired
 	StudyDAO studyDAO;
+
+	@Autowired
+	ProjectProvide projectProvide;
 
 	@Override
 	public String[] getCityStringArray(String dodo) {
@@ -203,6 +208,29 @@ public class StudyServiceImpl implements StudyService {
 				fos.close();
 			} catch (IOException e) {}
 		}
+		return res;
+	}
+
+	@Override
+	public int multFileUpload(MultipartHttpServletRequest mfile) {
+		int res = 0;
+		
+		List<MultipartFile> fileList  = mfile.getFiles("fName");
+		
+		String oFileNames = "";
+		int fileSize = 0;
+		
+		for(MultipartFile file : fileList) {
+			oFileNames += file.getOriginalFilename() + "/";
+			fileSize += file.getSize();
+			projectProvide.fileUploadFile(file, "fileUpload", null);
+			res = 1;
+		}
+		oFileNames = oFileNames.substring(0, oFileNames.length()-1);
+		
+		System.out.println("원본 파일:" + oFileNames);
+		System.out.println("총 파일 길이:" + fileSize);
+		
 		return res;
 	}
 

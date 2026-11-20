@@ -115,12 +115,33 @@ public class ProjectProvide {
 		
 		return "redirect:/message/mailSendOk?sw=emailKey";
 	}
-
+	
+	// 파일 삭제처리
 	public void deleteFile(String photo, String path) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/"+path+"/");
 		File file = new File(realPath + photo);
 		if(file.exists()) file.delete();
+	}
+	
+	public void writeFile(MultipartFile file, String sFileName, String path) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/"+path+"/");
+		
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(realPath+sFileName);
+			if(file.getBytes().length != -1)	{
+				fos.write(file.getBytes());
+			}
+		} catch (IOException e) {
+			System.out.println("파일 업로드 실패~~" + e.getMessage());
+		} finally {
+			try {
+				fos.close();
+			} catch (IOException e) {}
+		}
+		
 	}
 	
 }

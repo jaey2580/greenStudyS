@@ -8,10 +8,14 @@ import com.spring.greenStudyS.vo.MemberVO;
 
 public interface AdminDAO {
 
-	void setMemberLevelSelectCheck(@Param("idx") int idx, @Param("levelItem") int levelItem);
+	int setMemberLevelSelectCheck(@Param("idx") int idx, @Param("levelItem") int levelItem);
 
 	List<MemberVO> getMemberList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("level") int level);
 
 	int setMemberDeleteOk(@Param("idx") int idx);
+
+	List<MemberVO> getNewMemberList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize);
+
+	List<MemberVO> getMemberDeleteList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("level") int level);
 	
 }

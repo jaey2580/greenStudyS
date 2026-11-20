@@ -1,5 +1,6 @@
 package com.spring.greenStudyS.controller;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.greenStudyS.common.ARIAUtil;
 import com.spring.greenStudyS.common.ProjectProvide;
@@ -164,7 +167,13 @@ public class StudyController {
 	}
 	
 	@GetMapping("/fileUpload")
-	public String fileUploadGet() {
+	public String fileUploadGet(Model model, HttpServletRequest request) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload"); //끝에 /를 안붙이면 저 파일 전체 혹은 폴더를 가져오는것
+		
+		String[] files = new File(realPath).list(); //폴더일 경우에는 list를 붙여줘야함. 안붙이면 파일로 봄
+		
+		model.addAttribute("files", files);
+		model.addAttribute("fileCount", files.length);
 		return "study/fileUpload/fileUploadForm";
 	}
 	
@@ -173,14 +182,14 @@ public class StudyController {
 		//String realPath = request.getRealPath("");
 		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload/");
 		String uid = UUID.randomUUID().toString().substring(0, 8);
-		String oFileName = fName.getOriginalFilename();
+		String oFileName = fName.getOriginalFilename(); //업로드한 원본 파일 이름
 		String file = oFileName.substring(0,oFileName.lastIndexOf(".")) + "_" + uid  + oFileName.substring(oFileName.lastIndexOf("."));
 		
 		FileOutputStream fos = new FileOutputStream(realPath+file);
 		
 		fos.write(fName.getBytes());
-		
-		fos.close();
+		 
+		fos.close(); //파일이나 스레드나 데이터베이스는 자동으로 안닫혀서 직접 닫아줘야함
 		
 		return "redirect:/message/fileUploadOk";
 	}
@@ -192,6 +201,83 @@ public class StudyController {
 		
 		if(res != 0) return "redirect:/message/fileUploadOk";
 		else return "redirect:/message/fileUploadNo";
+	}
+	
+	//파일 개별 삭제
+	@ResponseBody
+	@PostMapping("/fileUpload/fileDelete")
+	public void fileDeletePost(HttpServletRequest request, String file) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload/");
+		new File(realPath + file).delete();
+	}
+	
+	//파일 전체 삭제
+	@ResponseBody
+	@PostMapping("/fileUpload/fileDeleteAll")
+	public String fileDeleteAllPost(HttpServletRequest request, String file) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload/");
+		
+		File targetFolder = new File(realPath);
+		if(!targetFolder.exists()) return "0"; //exists 존재하니?
+		
+		File[] files = targetFolder.listFiles(); // listFiles 폴더의 파일이름들만 가져와
+		
+		if(files.length == 0) return "0";
+		
+		for(File f : files) {
+			if(!f.isDirectory()) f.delete(); // isDirectory 폴더인지 확인해
+		}
+
+		return "1";
+	}
+	
+	//파일 선택 삭제
+	@ResponseBody
+	@PostMapping("/fileUpload/fileSelectDelete")
+	public String fileSelectDeletePost(HttpServletRequest request, String delItems) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload/");
+		
+		String[] fileNames = delItems.split("/");
+		
+		for(String f : fileNames) {
+			new File(realPath + fileNames).delete();
+		}
+		
+		return "1";
+	}
+	
+	@GetMapping("/fileUpload/multFile")
+	public String multFileGet() {
+		return "study/fileUpload/multFile";
+	}
+	
+	
+	@PostMapping("/fileUpload/multFile")
+	public String multFilePost(MultipartHttpServletRequest mfile) { //MultipartHttpServletRequest 여러 파일을 받을때
+		
+		int res = studyService.multFileUpload(mfile);
+		
+		if(res != 0) return "redirect:/message/multFileUploadOk";
+		else return "redirect:/message/multFileUploadNo";
+		
+	}
+	
+	
+	//파일 업로드2
+	@GetMapping("/fileUpload/multiFile2")
+	public String multiFile2Get() {
+		return "study/fileUpload/multiFile2";
+	}
+
+	@PostMapping("/fileUpload/multiFile2")
+	public String multiFile2Post(MultipartHttpServletRequest mFile, HttpServletRequest request) {
+		String[] imgNames = request.getParameter("imgNames").split("/");
+		
+		for(String imgName : imgNames) {
+			System.out.println("imgName: " + imgName);
+		}
+		
+		return "study/fileUpload/multiFile2";
 	}
 	
 	@GetMapping("/mailForm")

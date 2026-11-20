@@ -39,4 +39,6 @@ delete from member;
 
 select * from member where level=3;
 
+select * from member where date(startDate) >= date(subdate(now(),INTERVAL 7 DAY)) and date(startDate) <= date(now()) order by idx desc;
+
 select name, mid, now(), lastDate, timestampdiff(day, lastDate, now()) from member where userDel = 'OK';

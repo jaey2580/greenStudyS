@@ -11,17 +11,34 @@
 	<script>
 		'use strict';
 		
-		function levelChange(e){
-		let ans = confirm("현재 회원의 등급을 변경하시겠습니까?");
-		if(!ans) {
-			location.reload();
-			return false;
+		function levelChange(e,eidx){
+			let level = $(e).val();
+			let idx = eidx;
+			let ans = confirm("현재 회원의 등급을 변경하시겠습니까?");
+
+		if(!ans) return false;
+	
+		
+		let query = {
+				idx : idx,
+				levelItem : level
 		}
 		
 			$.ajax({
-								
+				url : "memberLevelChange",
+				type : "post",
+				data : query,
+				success : (res) => {
+					if(res != '0') {
+						alert("등급 변경이 완료되었습니다.");
+						location.reload();
+					}
+					else return false;
+				},
+				error : () => alert("전송에러")
 			});
 		}
+		
 	 	// 전체선택
 	  function allCheck() {
 	    for(let i=0; i<myform.idxFlag.length; i++) {
@@ -49,7 +66,7 @@
 	  	let idxSelectArray = "";
 	  	
 	  	
-	  	if(myform.idxFlag.length == 0) {
+	  	if($("input[name='idxFlag']:checked").length == 0) {
 	  		alert("등급을 변경할 항목을 1개 이상 선택하세요.");
 	  		return false;
 	  	}
@@ -123,7 +140,7 @@
     		<option value="1">우수회원</option>
     		<option value="2" selected>정회원</option>
     		<option value="3">준회원</option>
-    		<option value="99">탈퇴신청회원</option>z
+    		<option value="99">탈퇴신청회원</option>
     	</select>
   		<input type="button" onclick="levelSelectCheck()" value="등급변경" class="btn btn-primary btn-sm">
   	</div>
@@ -155,7 +172,7 @@
 	      <th>아이디</th>
 	      <th>성명</th>
 	      <th>이메일</th>
-	      <th>탈퇴경과</th>
+	      <th>생일/탈퇴경과</th>
 	      <th>비고</th>
 	    </tr>
 	    <c:forEach var="vo" items="${vos}" varStatus="st">
@@ -178,8 +195,8 @@
 			      	</c:if>
 		      	</td>
 			      <td>
-			      	<!-- <select name="level" id="level" class="form-select" onchange="levelChange(this)"> -->
-			      	<select name="level" id="level" class="form-select">
+			      	<select name="level" id="level" class="form-select" onchange="levelChange(this,${vo.idx})">
+			      	<!-- <select name="level" id="level" class="form-select"> -->
 			      		<option value="0" ${vo.level == 0 ? 'selected' : ''}>관리자</option>
 			      		<option value="1" ${vo.level == 1 ? 'selected' : ''}>우수회원</option>
 			      		<option value="2" ${vo.level == 2 ? 'selected' : ''}>정회원</option>
@@ -190,8 +207,9 @@
 		    </tr>
 	    </c:forEach>
 	  </table>
-	  
-	  <!-- 페이징처리(블록페이지 시작) -->
+	  <div><a href="adminRight" class="btn btn-dark">관리자 대시보드</a></div> 
+ 	
+ 	  <!-- 페이징처리(블록페이지 시작) -->
 	  <div class="text-center">
 	    <ul class="pagination justify-content-center">
 	      <c:if test="${pageVO.pag > 1}"><li class="page-item"><a href="memberList?level=${level}&pag=1&pageSize=${pageVO.pageSize}" class="page-link text-secondary">첫페이지</a></li></c:if>

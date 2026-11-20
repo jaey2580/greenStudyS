@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.spring.greenStudyS.dao.BoardDAO;
 import com.spring.greenStudyS.dao.MemberDAO;
+import com.spring.greenStudyS.dao.PdsDAO;
 import com.spring.greenStudyS.service.GuestService;
 
 @Component
@@ -16,6 +17,8 @@ public class PagiNation {
 	MemberDAO memberDAO;
 	@Autowired
 	BoardDAO boardDAO;
+	@Autowired
+	PdsDAO pdsDAO;
 
 	public PageVO getTotRecCnt(PageVO vo) {
 		int totRecCnt = 0;
@@ -27,7 +30,10 @@ public class PagiNation {
 			totRecCnt = memberDAO.getTotRecCnt();	// 전체 레코드 건수, 서비스 객체에서 굳이 할게 없으니까 dao에서 바로 호출
 		}
 		else if(vo.getSection().equals("board")) {
-			totRecCnt = boardDAO.getTotRecCnt();	// 전체 레코드 건수, 서비스 객체에서 굳이 할게 없으니까 dao에서 바로 호출
+			totRecCnt = boardDAO.getTotRecCnt();
+		}
+		else if(vo.getSection().equals("pds")) {
+			totRecCnt = pdsDAO.getTotRecCnt(vo.getPart());
 		}
 		
 		int totPage = (totRecCnt % vo.getPageSize()) == 0 ? (totRecCnt / vo.getPageSize()) : (totRecCnt / vo.getPageSize()) + 1;

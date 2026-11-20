@@ -48,7 +48,7 @@
   	<c:set var="curScrStartNo" value="${pageVO.curScrStartNo}"/>
     <c:forEach var="vo" items="${vos}" varStatus="st">
       <tr class="text-center">
-    	<td>${pageVO.curScrStartNo}</td>
+    	<td>${curScrStartNo}</td>
         <td>
           <a href="boardContent?idx=${vo.idx}&pag=${pageVO.pag}&pageSize=${pageVO.pageSize}">${vo.title}</a>
           <c:if test="${vo.replyCnt != 0}">(${vo.replyCnt})</c:if>

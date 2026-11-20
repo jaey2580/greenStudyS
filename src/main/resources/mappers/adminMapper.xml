@@ -7,10 +7,17 @@
  	<if test="level == -1">
 	 	select *, timestampdiff(day, lastDate, now()) as deleteDiff from member order by idx desc limit #{startIndexNo}, #{pageSize};
  	</if>
- 	
  	<if test="level != -1">
 	 	select *, timestampdiff(day, lastDate, now()) as deleteDiff from member where level=#{level} order by idx desc limit #{startIndexNo}, #{pageSize};
  	</if>
+ </select>
+ 
+ <select id="getMemberDeleteList" resultType="com.spring.greenStudyS.vo.MemberVO">
+	 	select *, timestampdiff(day, lastDate, now()) as deleteDiff from member where level=#{level} order by idx desc limit #{startIndexNo}, #{pageSize};
+ </select>
+ 
+ <select id="getNewMemberList" resultType="com.spring.greenStudyS.vo.MemberVO">
+	select * from member where date(startDate) >= date(subdate(now(),INTERVAL 7 DAY)) and date(startDate) <![CDATA[<=]]> date(now()) order by idx desc limit #{startIndexNo}, #{pageSize};
  </select>
  
  <update id="setMemberLevelSelectCheck">
