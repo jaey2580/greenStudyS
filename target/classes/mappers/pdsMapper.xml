@@ -16,6 +16,17 @@
  	select * from pds where idx = #{idx};
  </select>
  
+ <select id="getReviewList" resultType="com.spring.greenStudyS.vo.ReviewVO">
+ 	<!-- select * from review v left join reviewReply r on part=#{part} and partIdx=#{idx} and idx = reviewIdx order by idx desc, replyIdx desc; -->
+ 	<!-- select * from review where part=#{part} and partIdx=#{idx} order by idx desc; -->
+ 	select * from (select * from review where partIdx=#{idx}) as v left join reviewReply r 
+	on v.part="pds" and v.partIdx=#{idx} and v.idx = r.reviewIdx order by v.idx desc, r.replyIdx desc;
+ </select>
+ 
+ <select id="getReviewTotal" resultType="double">
+	 select avg(star) from review where part=#{part} and partIdx = #{idx};
+ </select>
+ 
  <insert id="setPdsInput">
  	insert into pds values (default, #{vo.mid}, #{vo.nickName}, #{vo.fName}, #{vo.fSName}, #{vo.fSize}, #{vo.title},#{vo.part}, default, default, #{vo.openSw},#{vo.hostIp},#{vo.content})
  </insert>

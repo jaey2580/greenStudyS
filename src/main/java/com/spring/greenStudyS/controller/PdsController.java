@@ -2,7 +2,6 @@ package com.spring.greenStudyS.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +24,7 @@ import com.spring.greenStudyS.common.PageVO;
 import com.spring.greenStudyS.common.PagiNation;
 import com.spring.greenStudyS.service.PdsService;
 import com.spring.greenStudyS.vo.PdsVO;
+import com.spring.greenStudyS.vo.ReviewVO;
 
 @Controller
 @RequestMapping("/pds")
@@ -93,6 +93,14 @@ public class PdsController {
 		model.addAttribute("pageSize", pageSize);
 		model.addAttribute("part", part);
 		
+		//등록된 리뷰 불러오기
+		List<ReviewVO> reviewVos = pdsService.getReviewList(idx, "pds");
+		model.addAttribute("reviewVos", reviewVos);
+		
+		// 별점 평균 구하기
+		double reviewAvg = pdsService.getReviewTotal(idx, "pds");
+		model.addAttribute("reviewAvg", reviewAvg);
+
 		return "pds/pdsContent";
 	}
 	

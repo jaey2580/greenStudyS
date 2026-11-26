@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.spring.greenStudyS.vo.PdsVO;
+import com.spring.greenStudyS.vo.ReviewVO;
 
 public interface PdsDAO {
 
@@ -19,6 +20,10 @@ public interface PdsDAO {
 	int setPdsDeleteCheck(@Param("idx") int idx);
 
 	PdsVO getPdsContent(@Param("idx") int idx);
+
+	List<ReviewVO> getReviewList(@Param("idx") int idx, @Param("part") String part);
+
+	double getReviewTotal(@Param("idx") int idx, @Param("part") String part);
 
 
 }

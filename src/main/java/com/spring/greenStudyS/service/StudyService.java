@@ -27,4 +27,8 @@ public interface StudyService {
 
 	int multFileUpload(MultipartHttpServletRequest mfile);
 
+	void getCalendar(HttpServletRequest request);
+
+	String setThumbnailCreate(MultipartFile file, HttpServletRequest request);
+
 }

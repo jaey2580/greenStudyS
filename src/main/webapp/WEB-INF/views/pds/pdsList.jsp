@@ -183,7 +183,6 @@
 		      <div class="modal-footer">
 		        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
 		      </div>
-		
 		  </div>
 		</div>
 	</div>	

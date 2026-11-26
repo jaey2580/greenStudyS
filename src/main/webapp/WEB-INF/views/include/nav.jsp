@@ -40,12 +40,17 @@
 	        <a href="${ctp}/study/fileUpload" class="w3-bar-item w3-button">FileUpload Test</a>
 	        <a href="${ctp}/study/mailForm" class="w3-bar-item w3-button">메일연습</a>
 	        <a href="${ctp}/study/passForm" class="w3-bar-item w3-button">비밀번호 암호화</a>
+	        <a href="${ctp}/study/calendarForm" class="w3-bar-item w3-button">달력 연습</a>
+	        <a href="${ctp}/study/thumbnailForm" class="w3-bar-item w3-button">썸네일 연습</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">
 	      <button onclick="location.href='${ctp}/member/memberMain'" class="w3-padding-large w3-button" title="More">MyPage <i class="fa fa-caret-down"></i></button>     
 	      <div class="w3-dropdown-content w3-bar-block w3-card-4">
-	        <c:if test="${sLevel != 3}"><a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a></c:if>
+	        <c:if test="${sLevel != 3}">
+	        	<a href="${ctp}/schedule/schedule" class="w3-bar-item w3-button">일정관리</a>
+	        	<a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a>
+        	</c:if>
 	        <a href="${ctp}/member/memberPwdCheck/p" class="w3-bar-item w3-button">비밀번호변경</a>
 	        <a href="${ctp}/member/memberPwdCheck/u" class="w3-bar-item w3-button">회원정보수정</a>
 	        <a href="javascript:userDelCheck()" class="w3-bar-item w3-button">회원탈퇴</a>

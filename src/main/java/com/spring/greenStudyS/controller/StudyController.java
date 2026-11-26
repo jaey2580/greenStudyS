@@ -394,6 +394,24 @@ public class StudyController {
 		return pwd;
 	}
 	
+	@GetMapping("/calendarForm")
+	public String calendarFormGet(HttpServletRequest request) {
+		studyService.getCalendar(request);
+		
+		return "study/calendar/calendarForm";
+	}
+	
+	
+	@GetMapping("/thumbnailForm")
+	public String thumbnailFormGet() {
+		return "study/thumbnail/thumbnailForm";
+	}
+	
+	@ResponseBody
+	@PostMapping("/thumbnailForm")
+	public String thumbnailFormPost(MultipartFile file, HttpServletRequest request) {
+		return studyService.setThumbnailCreate(file, request);
+	}
 	
 	
 	

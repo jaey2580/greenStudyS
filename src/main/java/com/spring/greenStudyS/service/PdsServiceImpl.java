@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.spring.greenStudyS.common.ProjectProvide;
 import com.spring.greenStudyS.dao.PdsDAO;
 import com.spring.greenStudyS.vo.PdsVO;
+import com.spring.greenStudyS.vo.ReviewVO;
 
 @Service
 public class PdsServiceImpl implements PdsService {
@@ -74,6 +75,16 @@ public class PdsServiceImpl implements PdsService {
 	@Override
 	public PdsVO getPdsContent(int idx) {
 		return pdsDAO.getPdsContent(idx);
+	}
+
+	@Override
+	public List<ReviewVO> getReviewList(int idx, String part) {
+		return pdsDAO.getReviewList(idx, part);
+	}
+
+	@Override
+	public double getReviewTotal(int idx, String part) {
+		return pdsDAO.getReviewTotal(idx, part);
 	}
 
 }

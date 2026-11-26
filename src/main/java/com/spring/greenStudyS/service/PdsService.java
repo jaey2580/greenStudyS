@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.greenStudyS.vo.PdsVO;
+import com.spring.greenStudyS.vo.ReviewVO;
 
 public interface PdsService {
 
@@ -17,5 +18,9 @@ public interface PdsService {
 	int setPdsDeleteCheck(int idx, String fSName);
 
 	PdsVO getPdsContent(int idx);
+
+	List<ReviewVO> getReviewList(int idx, String part);
+
+	double getReviewTotal(int idx, String part);
 
 }
